@@ -9,7 +9,7 @@ jobs:
     docker:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.6.1
+      - image: cimg/python:3.8.4
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -25,7 +25,7 @@ jobs:
       - run:
           name: "Setup custom environment variables"
           command: |
-            echo 'export PATH="/home/circleci/repo/venv/cmake-3.14.0/bin:$PATH"' >> $BASH_ENV # Redirect MY_ENV_VAR into $BASH_ENV
+            echo 'export PATH="/home/circleci/repo/venv/cmake-3.18.3/bin:$PATH"' >> $BASH_ENV # Redirect MY_ENV_VAR into $BASH_ENV
 
       # Download and cache dependencies
       - restore_cache:
@@ -43,7 +43,7 @@ jobs:
             . venv/bin/activate
             source $BASH_ENV
             pip install -r requirements.txt
-            cd venv && wget --quiet https://github.com/Kitware/CMake/releases/download/v3.14.0/cmake-3.14.0.tar.gz && tar -xvf cmake-3.14.0.tar.gz &&  cd cmake-3.14.0 && ./bootstrap && make
+            cd venv && wget --quiet https://github.com/Kitware/CMake/releases/download/v3.18.3/cmake-3.18.3.tar.gz && tar -xvf cmake-3.18.3.tar.gz &&  cd cmake-3.18.3 && ./bootstrap && make
             find ./ -name cmake
 
       - save_cache:
