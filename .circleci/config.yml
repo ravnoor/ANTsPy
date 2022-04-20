@@ -39,7 +39,7 @@ jobs:
           no_output_timeout: 600m
           command: |
             echo $PATH
-            python3 -m venv venv
+            python -m venv venv
             . venv/bin/activate
             source $BASH_ENV
             pip install -r requirements.txt
