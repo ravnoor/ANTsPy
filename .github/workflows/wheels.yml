@@ -55,7 +55,7 @@ jobs:
 
           CIBW_ARCHS_MACOS: ${{ matrix.arch }}
           CIBW_BEFORE_ALL_MACOS: |
-            pip install cmake ninja
+            brew install cmake ninja
 
           CIBW_ENVIRONMENT_MACOS: |
             CMAKE_OSX_ARCHITECTURES=${{ matrix.arch }}
