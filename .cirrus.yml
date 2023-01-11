@@ -19,10 +19,10 @@ linux_x86_task:
   install_pre_requirements_script:
    - export DEBIAN_FRONTEND=noninteractive
    - apt-get update
-   - apt install -y python3-venv python-is-python3
+   - apt install -y python3-dev python-is-python3
    - apt-get install -y --no-install-recommends apt-transport-https bash ca-certificates curl git gnupg wget
-   - apt-get install -y build-essential gfortran libpng-dev libblas-dev liblapack-dev python3-dev
-   - pip install cmake ninja scikit-build
+   - apt-get install -y build-essential gfortran libpng-dev libblas-dev liblapack-dev 
+   - python -m pip install cmake ninja scikit-build
    - which python
   <<: *BUILD_AND_STORE_WHEELS
 
