@@ -139,9 +139,12 @@ docker_builder:
     - reopened
     - synchronize
     - ready_for_review
+  env:
+    DOCKER_USERNAME: ENCRYPTED[!09cc4caa9cb6dbf5af7f2630c1d74076abd1cff6bb103db2bae45d022f28404e040ee5db21f076f70decb59a294780ab!]
+    DOCKER_PASSWORD: ENCRYPTED[!3fdf13fa15d1a18c20743ed608341a911adee551709675c8a6622bebec5dbc5d7f720ee7baea04db7fb992652185de01!]
   setup_script:
     - docker --version
-  login_script: echo ${DOCKER_PASSWORD} | docker login --username ${DOCKER_USERNAME} --password-stdin
+  login_script: docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
   build_script: docker build --tag ${DOCKERHUB_ORG}/${DOCKERHUB_REPO}:${TAG_x86_64} .
   push_script: docker push ${DOCKERHUB_ORG}/${DOCKERHUB_REPO}:${TAG_x86_64}
 
@@ -157,9 +160,11 @@ docker_builder:
     - ready_for_review
   env:
     CIRRUS_ARCH: arm64
+    DOCKER_USERNAME: ENCRYPTED[!09cc4caa9cb6dbf5af7f2630c1d74076abd1cff6bb103db2bae45d022f28404e040ee5db21f076f70decb59a294780ab!]
+    DOCKER_PASSWORD: ENCRYPTED[!3fdf13fa15d1a18c20743ed608341a911adee551709675c8a6622bebec5dbc5d7f720ee7baea04db7fb992652185de01!]
   setup_script:
     - docker --version
-  login_script: echo ${DOCKER_PASSWORD} | docker login --username ${DOCKER_USERNAME} --password-stdin 
+  login_script: docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD 
   build_script: docker build --tag ${DOCKERHUB_ORG}/${DOCKERHUB_REPO}:${TAG_AARCH64} .
   push_script: docker push ${DOCKERHUB_ORG}/${DOCKERHUB_REPO}:${TAG_AARCH64}
 
@@ -173,6 +178,8 @@ docker_builder:
     - build_linux_aarch64_image
   env:
     DOCKER_CLI_EXPERIMENTAL: enabled
+    DOCKER_USERNAME: ENCRYPTED[!09cc4caa9cb6dbf5af7f2630c1d74076abd1cff6bb103db2bae45d022f28404e040ee5db21f076f70decb59a294780ab!]
+    DOCKER_PASSWORD: ENCRYPTED[!3fdf13fa15d1a18c20743ed608341a911adee551709675c8a6622bebec5dbc5d7f720ee7baea04db7fb992652185de01!]
   script: |
     #!/usr/bin/env bash
 
