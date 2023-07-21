@@ -141,8 +141,8 @@ docker_builder:
     - ready_for_review
   setup_script:
     - docker --version
+  login_script: echo ${DOCKER_PASSWORD} | docker login --username ${DOCKER_USERNAME} --password-stdin
   build_script: docker build --tag ${DOCKERHUB_ORG}/${DOCKERHUB_REPO}:${TAG_x86_64} .
-  login_script: docker login --username ${DOCKER_USERNAME} --password ${DOCKER_PASSWORD}
   push_script: docker push ${DOCKERHUB_ORG}/${DOCKERHUB_REPO}:${TAG_x86_64}
 
 
@@ -159,8 +159,8 @@ docker_builder:
     CIRRUS_ARCH: arm64
   setup_script:
     - docker --version
+  login_script: echo ${DOCKER_PASSWORD} | docker login --username ${DOCKER_USERNAME} --password-stdin 
   build_script: docker build --tag ${DOCKERHUB_ORG}/${DOCKERHUB_REPO}:${TAG_AARCH64} .
-  login_script: docker login --username ${DOCKER_USERNAME} --password ${DOCKER_PASSWORD}
   push_script: docker push ${DOCKERHUB_ORG}/${DOCKERHUB_REPO}:${TAG_AARCH64}
 
 
