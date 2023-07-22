@@ -3,7 +3,7 @@ env:
   DOCKERHUB_ORG: noelmni
   DOCKERHUB_REPO: antspy
   DOCKER_USERNAME: noelmni
-  DOCKER_PASSWORD: ENCRYPTED[!3fdf13fa15d1a18c20743ed608341a911adee551709675c8a6622bebec5dbc5d7f720ee7baea04db7fb992652185de01!]
+  DOCKER_PASSWORD: ENCRYPTED[3fdf13fa15d1a18c20743ed608341a911adee551709675c8a6622bebec5dbc5d7f720ee7baea04db7fb992652185de01]
   GITHUB_TOKEN: ENCRYPTED[!PLACEHOLDER_FOR_GITHUB_TOKEN!]
   TWINE_USERNAME: ENCRYPTED[!PLACEHOLDER_FOR_TWINE_USERNAME!] # username for pypi
   TWINE_PASSWORD: ENCRYPTED[!PLACEHOLDER_FOR_TWINE_PASSWORD!] # password for pypi
@@ -141,7 +141,7 @@ docker_builder:
     - ready_for_review
   env:
     DOCKER_USERNAME: noelmni
-    DOCKER_PASSWORD: ENCRYPTED[!3fdf13fa15d1a18c20743ed608341a911adee551709675c8a6622bebec5dbc5d7f720ee7baea04db7fb992652185de01!]
+    DOCKER_PASSWORD: ENCRYPTED[3fdf13fa15d1a18c20743ed608341a911adee551709675c8a6622bebec5dbc5d7f720ee7baea04db7fb992652185de01]
   setup_script:
     - docker --version
   login_script: docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
@@ -161,7 +161,7 @@ docker_builder:
   env:
     CIRRUS_ARCH: arm64
     DOCKER_USERNAME: noelmni
-    DOCKER_PASSWORD: ENCRYPTED[!3fdf13fa15d1a18c20743ed608341a911adee551709675c8a6622bebec5dbc5d7f720ee7baea04db7fb992652185de01!]
+    DOCKER_PASSWORD: ENCRYPTED[3fdf13fa15d1a18c20743ed608341a911adee551709675c8a6622bebec5dbc5d7f720ee7baea04db7fb992652185de01]
   setup_script:
     - docker --version
   login_script: docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD 
@@ -179,7 +179,7 @@ docker_builder:
   env:
     DOCKER_CLI_EXPERIMENTAL: enabled
     DOCKER_USERNAME: noelmni
-    DOCKER_PASSWORD: ENCRYPTED[!3fdf13fa15d1a18c20743ed608341a911adee551709675c8a6622bebec5dbc5d7f720ee7baea04db7fb992652185de01!]
+    DOCKER_PASSWORD: ENCRYPTED[3fdf13fa15d1a18c20743ed608341a911adee551709675c8a6622bebec5dbc5d7f720ee7baea04db7fb992652185de01]
   script: |
     #!/usr/bin/env bash
 
