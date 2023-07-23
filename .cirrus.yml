@@ -140,8 +140,8 @@ docker_builder:
     - synchronize
     - ready_for_review
   setup_script:
-    - docker --version
-  login_script: docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+    - docker info
+  login_script: echo ${DOCKER_PASSWORD} | docker login --username ${DOCKER_USERNAME} --password-stdin
   build_script: docker build --tag ${DOCKERHUB_ORG}/${DOCKERHUB_REPO}:${TAG_x86_64} .
   push_script: docker push ${DOCKERHUB_ORG}/${DOCKERHUB_REPO}:${TAG_x86_64}
 
@@ -158,8 +158,8 @@ docker_builder:
   env:
     CIRRUS_ARCH: arm64
   setup_script:
-    - docker --version
-  login_script: docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD 
+    - docker info
+  login_script: echo ${DOCKER_PASSWORD} | docker login --username ${DOCKER_USERNAME} --password-stdin
   build_script: docker build --tag ${DOCKERHUB_ORG}/${DOCKERHUB_REPO}:${TAG_AARCH64} .
   push_script: docker push ${DOCKERHUB_ORG}/${DOCKERHUB_REPO}:${TAG_AARCH64}
 
@@ -188,7 +188,7 @@ docker_builder:
 
     # combine docker images into one
     docker info
-    docker login --username=${DOCKER_USERNAME} --password=${DOCKER_PASSWORD}
+    echo ${DOCKER_PASSWORD} | docker login --username ${DOCKER_USERNAME} --password-stdin
     docker manifest create ${DOCKERHUB_ORG}/${DOCKERHUB_REPO}:${TAG_MULTIARCH} --amend ${DOCKERHUB_ORG}/${DOCKERHUB_REPO}:${TAG_x86_64} ${DOCKERHUB_ORG}/${DOCKERHUB_REPO}:${TAG_AARCH64}
     docker manifest push ${DOCKERHUB_ORG}/${DOCKERHUB_REPO}:${TAG_MULTIARCH}
 
