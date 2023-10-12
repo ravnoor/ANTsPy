@@ -8,3 +8,4 @@ webcolors
 matplotlib
 Pillow
 nibabel
+packaging
