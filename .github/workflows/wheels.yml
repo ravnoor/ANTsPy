@@ -4,6 +4,7 @@ on:
   push:
     branches:
     - master
+    - fix_windows_py312
   pull_request:
     branches:
     - master
