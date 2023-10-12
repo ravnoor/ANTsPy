@@ -176,7 +176,7 @@ jobs:
             pip install cmake ninja
 
           CIBW_BEFORE_ALL_WINDOWS: |
-            pip install cmake ninja packaging
+            pip install cmake ninja packaging setuptools
 
           CIBW_ARCHS_MACOS: ${{ matrix.arch }}
           CIBW_BEFORE_ALL_MACOS: |
