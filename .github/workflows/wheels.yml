@@ -161,7 +161,7 @@ jobs:
             python -m pip install cmake ninja
 
           CIBW_BEFORE_ALL_WINDOWS: |
-            python -m pip install cmake ninja setuptools
+            python -m pip install cmake ninja
 
           CIBW_ARCHS_MACOS: ${{ matrix.arch }}
           CIBW_BEFORE_ALL_MACOS: |
