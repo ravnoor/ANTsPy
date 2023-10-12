@@ -190,7 +190,6 @@ setup(
         "chart_studio",
         "Pillow",
         "nibabel",
-        "packaging",
     ],
     author="Brian B. Avants and Nicholas Cullen",
     author_email="stnava@gmail.com",

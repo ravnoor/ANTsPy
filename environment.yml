@@ -9,7 +9,6 @@ dependencies:
 - statsmodels
 - matplotlib
 - Pillow
-- packaging
 - pip
 - pip:
   - nibabel
