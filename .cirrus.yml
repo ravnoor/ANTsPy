@@ -18,6 +18,7 @@ build_and_store_wheels: &BUILD_AND_STORE_WHEELS
     - python -m pip install --upgrade pip build twine
     - python -m pip install cibuildwheel==2.16.2 jq pipx setuptools
     - python -m pipx ensurepath
+    - which pipx
   run_cibuildwheel_script:
     - cibuildwheel
   wheels_artifacts:
