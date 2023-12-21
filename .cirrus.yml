@@ -5,8 +5,8 @@ env:
   DOCKER_USERNAME: ENCRYPTED[!09cc4caa9cb6dbf5af7f2630c1d74076abd1cff6bb103db2bae45d022f28404e040ee5db21f076f70decb59a294780ab!]
   DOCKER_PASSWORD: ENCRYPTED[!3eccd194e0044101db2d7379d2d95f9255e3493c7ae72a6843ca83a6547ea271541271d77858a2ffd30f61ab68514a64!]
   GITHUB_TOKEN: ENCRYPTED[!PLACEHOLDER_FOR_GITHUB_TOKEN!]
-  TWINE_USERNAME: ENCRYPTED[!PLACEHOLDER_FOR_TWINE_USERNAME!] # username for pypi
-  TWINE_PASSWORD: ENCRYPTED[!PLACEHOLDER_FOR_TWINE_PASSWORD!] # password for pypi
+  TWINE_USERNAME: __token__ # username for testpypi
+  TWINE_PASSWORD: ENCRYPTED[!46fdefa18f532b557879c96b8940c872b4b4a36e0648c96e9fd7c83fa3d6828647b682f24181eb11328cc9f23f4e7326!] # api token for testpypi
   TAG_x86_64: ci-x86_64-tmp
   TAG_AARCH64: ci-aarch64-tmp
 
@@ -55,15 +55,15 @@ build_and_store_wheels: &BUILD_AND_STORE_WHEELS
   upload_pypi_script: |
     #!/usr/bin/env bash
 
-    if [[ "${CIRRUS_RELEASE}" == "" ]]; then
-        exit 0
-    fi
+    # if [[ "${CIRRUS_RELEASE}" == "" ]]; then
+    #     exit 0
+    # fi
 
-    # deploy source distribution to PyPI using 'twine'
-    pipx run twine upload -r pypi dist/*
+    # deploy wheels to TestPyPI
+    pipx run twine upload --repository testpypi wheelhouse/*
 
-    # deploy wheels to PyPI
-    pipx run twine upload -r pypi wheelhouse/*
+    # deploy source distribution to TestPyPI
+    pipx run twine upload --repository testpypi dist/*
 
 
 linux_aarch64_task:
