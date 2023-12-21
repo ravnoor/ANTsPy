@@ -18,9 +18,13 @@ build_and_store_wheels: &BUILD_AND_STORE_WHEELS
     - python -m pipx ensurepath
   run_cibuildwheel_script:
     - cibuildwheel
+  wheels_artifacts:
+    path: "wheelhouse/*"
   make_sdist_script:
     - rm -rf dist # clear out your 'dist' folder 
     - pipx run build --sdist # make a source distribution
+  sdist_artifacts:
+    path: "dist/*.tar.gz"
   upload_releases_script: |
     #!/usr/bin/env bash
 
@@ -58,10 +62,6 @@ build_and_store_wheels: &BUILD_AND_STORE_WHEELS
 
     # deploy wheels to PyPI
     pipx run twine upload -r pypi wheelhouse/*
-  sdist_artifacts:
-    path: "dist/*.tar.gz"
-  wheels_artifacts:
-    path: "wheelhouse/*"
 
 
 linux_aarch64_task:
