@@ -1,0 +1,136 @@
+name: Build
+
+on:
+  push:
+    branches:
+    - master
+    - TestPyPI
+  pull_request:
+    branches:
+    - master
+  release:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  build_wheels:
+    name: Build wheel for cp${{ matrix.cibw_python }}-${{ matrix.platform_id }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # macOS on Apple M1 64-bit
+          - os: [self-hosted, macOS, ARM64]
+            python: '3.8'
+            cibw_python: 38
+            arch: arm64
+            platform_id: macosx_arm64
+          - os: [self-hosted, macOS, ARM64]
+            python: '3.9'
+            cibw_python: 39
+            arch: arm64
+            platform_id: macosx_arm64
+          - os: [self-hosted, macOS, ARM64]
+            python: '3.10'
+            cibw_python: 310
+            arch: arm64
+            platform_id: macosx_arm64
+          - os: [self-hosted, macOS, ARM64]
+            python: '3.11'
+            cibw_python: 311
+            arch: arm64
+            platform_id: macosx_arm64
+          - os: [self-hosted, macOS, ARM64]
+            python: '3.12'
+            cibw_python: 312
+            arch: arm64
+            platform_id: macosx_arm64
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - uses: actions/setup-python@v5
+        name: Install Python host for cibuildwheel
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install cibuildwheel
+        run: python -m pip install cibuildwheel==2.16.2 setuptools
+
+      - name: Get package name and version (Linux / Mac)
+        if: ${{ ! startsWith(matrix.os, 'windows-') }}
+        run: |
+          echo PACKAGE_NAME=$( python setup.py --name ) >> $GITHUB_ENV
+          echo PACKAGE_VERSION=$( python setup.py --version ) >> $GITHUB_ENV
+
+      - name: Build wheels
+        env:
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
+          CIBW_MANYLINUX_I686_IMAGE: manylinux2014
+          CIBW_BUILD: cp${{ matrix.cibw_python }}-${{ matrix.platform_id }}
+          # Include latest Python beta
+          CIBW_PRERELEASE_PYTHONS: True
+          CIBW_ARCHS_MACOS: ${{ matrix.arch }}
+          CIBW_BEFORE_ALL_MACOS: |
+            python -m pip install cmake ninja setuptools
+          CIBW_ENVIRONMENT_MACOS: |
+            CMAKE_OSX_ARCHITECTURES=${{ matrix.arch }}
+        run: python -m cibuildwheel --output-dir wheelhouse/cp${{ matrix.cibw_python }}-${{matrix.platform_id }}
+
+      - name: Install and test (Linux / Mac)
+        if: ${{ ! startsWith(matrix.os, 'windows-') }}
+        run: |
+          python -m pip install wheelhouse/cp${{ matrix.cibw_python }}-${{matrix.platform_id }}/*.whl
+          tests/run_tests.sh
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.PACKAGE_NAME }}-${{ env.PACKAGE_VERSION }}-cp${{ matrix.cibw_python }}-${{ matrix.platform_id }}
+          path: ./wheelhouse/cp${{ matrix.cibw_python }}-${{ matrix.platform_id }}/*.whl
+
+      - name: Upload release asset
+        # Previously was using actions/upload-release-asset@v1 , but this had some
+        # errors with large files
+        uses: ncipollo/release-action@v1.11.1
+        if: ${{ github.event_name == 'release' }}
+        with:
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
+          artifacts: ./wheelhouse/cp${{ matrix.cibw_python }}-${{ matrix.platform_id }}/*.whl
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish prep
+        # if: ${{ (github.event_name == 'push') && (runner.os == 'Linux') }}
+        run: |
+          mywhl=`find ~/ -name "antspyx*.whl"`
+          extrawheeldir=`dirname $mywhl`
+          wheeldirx=`dirname $extrawheeldir`
+          wheeldir=`dirname $wheeldirx`
+          wheeldir=${wheeldir}/dist
+          mkdir -p $wheeldir
+          echo $wheeldir
+          mv $mywhl $wheeldir
+          rm -r -f $extrawheeldir $wheeldirx
+          
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
+        if: ${{ (github.event_name == 'push') && (runner.os == 'Linux') }}
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          verify_metadata: false
+          skip_existing: true
+          verbose: true
+
+      - name: Publish package to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        # if: ${{ (github.event_name == 'push') && (runner.os == 'Linux') }}
+        with:
+          user: __token__
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository-url: https://test.pypi.org/legacy/
+          verbose: true
