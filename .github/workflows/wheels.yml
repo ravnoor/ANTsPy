@@ -204,7 +204,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish prep
-        if: ${{ (github.event_name == 'push') && (runner.os == 'Linux') }}
+        # if: ${{ (github.event_name == 'push') && (runner.os == 'Linux') }}
         run: |
           mywhl=`find ~/ -name "antspyx*.whl"`
           extrawheeldir=`dirname $mywhl`
@@ -228,7 +228,7 @@ jobs:
 
       - name: Publish package to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        if: ${{ (github.event_name == 'push') && (runner.os == 'Linux') }}
+        # if: ${{ (github.event_name == 'push') && (runner.os == 'Linux') }}
         with:
           user: __token__
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
