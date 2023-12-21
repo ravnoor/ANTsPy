@@ -118,7 +118,7 @@ macos_arm64_task:
     CIBW_ARCHS_MACOS: arm64
     CIBW_BEFORE_ALL_MACOS: >
       python -m ensurepip --upgrade &&
-      conda install cmake ninja libpng
+      mamba install cmake ninja libpng
     CIBW_BEFORE_TEST: |
       python -m pip install --find-links=wheelhouse/ -r requirements.txt
     CIBW_TEST_COMMAND: bash {project}/tests/run_tests.sh
@@ -126,8 +126,8 @@ macos_arm64_task:
     PATH: $HOME/mambaforge/bin/:${PATH}
     CONDA_HOME: $HOME/mambaforge
   conda_script:
-    - curl -L -o ~/mambaforge.sh https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-arm64.sh
-    - bash ~/mambaforge.sh -b -p ~/mambaforge
+    - curl -L -o ~/mambaforge.sh https://github.com/conda-forge/miniforge/releases/download/23.3.1-1/Mambaforge-23.3.1-1-MacOSX-arm64.sh
+    - bash ~/mambaforge.sh -b -p ${CONDA_HOME}
   <<: *BUILD_AND_STORE_WHEELS
 
 
