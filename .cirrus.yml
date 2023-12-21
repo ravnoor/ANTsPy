@@ -15,7 +15,7 @@ build_and_store_wheels: &BUILD_AND_STORE_WHEELS
   install_cibuildwheel_pipx_script:
     - which python
     - python -VV
-    - python -m pip install --upgrade pip twine
+    - python -m pip install --upgrade build pip twine
     - python -m pip install cibuildwheel==2.16.2 jq pipx setuptools
     - python -m pipx ensurepath
     - which pipx
@@ -23,6 +23,8 @@ build_and_store_wheels: &BUILD_AND_STORE_WHEELS
     - cibuildwheel
   wheels_artifacts:
     path: "wheelhouse/*"
+  make_sdist_script:
+    - pipx run build --sdist # make a source distribution
   sdist_artifacts:
     path: "dist/*.tar.gz"
   upload_releases_script: |
