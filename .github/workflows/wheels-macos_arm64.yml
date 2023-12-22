@@ -128,6 +128,8 @@ jobs:
   pypi-publish:
     name: Upload release to PyPI
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
     # retrieve your distributions here
     - name: Download artifacts
@@ -140,8 +142,6 @@ jobs:
         merge-multiple: true
 
     - name: Publish package to PyPI
-      permissions:
-        id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
       uses: pypa/gh-action-pypi-publish@release/v1
       if: ${{ (github.event_name == 'push') && (runner.os == 'Linux') }}
       with:
