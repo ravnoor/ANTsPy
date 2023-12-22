@@ -21,21 +21,21 @@ jobs:
       matrix:
         include:
           # macOS on Apple M1 64-bit
-          - os: [self-hosted, macOS, ARM64]
-            python: '3.9'
-            cibw_python: 39
-            arch: arm64
-            platform_id: macosx_arm64
-          - os: [self-hosted, macOS, ARM64]
-            python: '3.10'
-            cibw_python: 310
-            arch: arm64
-            platform_id: macosx_arm64
-          - os: [self-hosted, macOS, ARM64]
-            python: '3.11'
-            cibw_python: 311
-            arch: arm64
-            platform_id: macosx_arm64
+          # - os: [self-hosted, macOS, ARM64]
+          #   python: '3.9'
+          #   cibw_python: 39
+          #   arch: arm64
+          #   platform_id: macosx_arm64
+          # - os: [self-hosted, macOS, ARM64]
+          #   python: '3.10'
+          #   cibw_python: 310
+          #   arch: arm64
+          #   platform_id: macosx_arm64
+          # - os: [self-hosted, macOS, ARM64]
+          #   python: '3.11'
+          #   cibw_python: 311
+          #   arch: arm64
+          #   platform_id: macosx_arm64
           - os: [self-hosted, macOS, ARM64]
             python: '3.12'
             cibw_python: 312
