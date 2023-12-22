@@ -22,11 +22,6 @@ jobs:
         include:
           # macOS on Apple M1 64-bit
           - os: [self-hosted, macOS, ARM64]
-            python: '3.8'
-            cibw_python: 38
-            arch: arm64
-            platform_id: macosx_arm64
-          - os: [self-hosted, macOS, ARM64]
             python: '3.9'
             cibw_python: 39
             arch: arm64
@@ -102,7 +97,6 @@ jobs:
           CIBW_BEFORE_TEST: |
             python -m pip install --find-links=wheelhouse/ -r requirements.txt
           CIBW_TEST_COMMAND: bash {project}/tests/run_tests.sh
-          CIBW_TEST_SKIP: cp38-macosx_*:arm64
         run: |
           python -m cibuildwheel --output-dir wheelhouse/cp${{ matrix.cibw_python }}-${{ matrix.platform_id }}
 
