@@ -52,7 +52,7 @@ jobs:
         with:
           submodules: true
 
-      - name: name: Install Python host for cibuildwheel
+      - name: Install Python host for cibuildwheel
         uses: conda-incubator/setup-miniconda@v3
         with:
           miniforge-variant: Mambaforge
