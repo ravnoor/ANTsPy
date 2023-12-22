@@ -157,6 +157,11 @@ jobs:
     name: Upload release to TestPyPI
     needs: [build_wheels]
     runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/ANTsPy_macos_arm64
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
     steps:
     # retrieve your distributions here
     - name: Download artifacts
