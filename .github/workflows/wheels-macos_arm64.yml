@@ -55,6 +55,8 @@ jobs:
       - name: Install Python host for cibuildwheel
         uses: conda-incubator/setup-miniconda@v3
         with:
+          auto-activate-base: true
+          activate-environment: ""
           miniforge-variant: Mambaforge
           miniforge-version: latest
           channels: conda-forge
