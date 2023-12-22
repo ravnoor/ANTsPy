@@ -52,13 +52,29 @@ jobs:
         with:
           submodules: true
 
-      - uses: actions/setup-python@v5
-        name: Install Python host for cibuildwheel
+      - name: name: Install Python host for cibuildwheel
+        uses: conda-incubator/setup-miniconda@v3
         with:
+          miniforge-variant: Mambaforge
+          miniforge-version: latest
+          channels: conda-forge
+          channel-priority: true
           python-version: ${{ matrix.python }}
 
+      - name: Dependencies
+        shell: bash -l {0}
+        run: |
+          # Workaround for https://github.com/conda-incubator/setup-miniconda/issues/186
+          conda config --remove channels defaults
+          # dependencies
+          python -m ensurepip --upgrade
+          mamba install cmake ninja libpng
+
       - name: Install cibuildwheel
-        run: python -m pip install cibuildwheel==2.16.2 setuptools
+        run: |
+          python -m pip install --upgrade build pip twine
+          python -m pip install cibuildwheel==2.16.2 jq pipx setuptools
+          python -m pipx ensurepath
 
       - name: Get package name and version (Linux / Mac)
         if: ${{ ! startsWith(matrix.os, 'windows-') }}
@@ -66,7 +82,7 @@ jobs:
           echo PACKAGE_NAME=$( python setup.py --name ) >> $GITHUB_ENV
           echo PACKAGE_VERSION=$( python setup.py --version ) >> $GITHUB_ENV
 
-      - name: Build wheels
+      - name: Build and test wheels
         env:
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
           CIBW_MANYLINUX_I686_IMAGE: manylinux2014
@@ -74,19 +90,17 @@ jobs:
           # Include latest Python beta
           CIBW_PRERELEASE_PYTHONS: True
           CIBW_ARCHS_MACOS: ${{ matrix.arch }}
-          CIBW_BEFORE_ALL_MACOS: |
-            python -m pip install cmake ninja setuptools
           CIBW_ENVIRONMENT_MACOS: |
             CMAKE_OSX_ARCHITECTURES=${{ matrix.arch }}
-        run: python -m cibuildwheel --output-dir wheelhouse/cp${{ matrix.cibw_python }}-${{matrix.platform_id }}
-
-      - name: Install and test (Linux / Mac)
-        if: ${{ ! startsWith(matrix.os, 'windows-') }}
+          CIBW_BEFORE_TEST: |
+            python -m pip install --find-links=wheelhouse/ -r requirements.txt
+          CIBW_TEST_COMMAND: bash {project}/tests/run_tests.sh
+          CIBW_TEST_SKIP: cp38-macosx_*:arm64
         run: |
-          python -m pip install wheelhouse/cp${{ matrix.cibw_python }}-${{matrix.platform_id }}/*.whl
-          tests/run_tests.sh
+          python -m cibuildwheel --output-dir wheelhouse/cp${{ matrix.cibw_python }}-${{ matrix.platform_id }}
 
-      - uses: actions/upload-artifact@v3
+      - name: Store wheel artifacts
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PACKAGE_NAME }}-${{ env.PACKAGE_VERSION }}-cp${{ matrix.cibw_python }}-${{ matrix.platform_id }}
           path: ./wheelhouse/cp${{ matrix.cibw_python }}-${{ matrix.platform_id }}/*.whl
@@ -103,19 +117,6 @@ jobs:
           artifacts: ./wheelhouse/cp${{ matrix.cibw_python }}-${{ matrix.platform_id }}/*.whl
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish prep
-        # if: ${{ (github.event_name == 'push') && (runner.os == 'Linux') }}
-        run: |
-          mywhl=`find ~/ -name "antspyx*.whl"`
-          extrawheeldir=`dirname $mywhl`
-          wheeldirx=`dirname $extrawheeldir`
-          wheeldir=`dirname $wheeldirx`
-          wheeldir=${wheeldir}/dist
-          mkdir -p $wheeldir
-          echo $wheeldir
-          mv $mywhl $wheeldir
-          rm -r -f $extrawheeldir $wheeldirx
-          
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
         if: ${{ (github.event_name == 'push') && (runner.os == 'Linux') }}
@@ -126,9 +127,17 @@ jobs:
           skip_existing: true
           verbose: true
 
+      - name: Download artifacts
+        # needs: [build_wheels, build_sdist]
+        uses: actions/download-artifact@v4
+        with:
+          # unpacks all CIBW artifacts into dist/
+          pattern: ${{ env.PACKAGE_NAME }}-${{ env.PACKAGE_VERSION }}*
+          path: dist
+          merge-multiple: true
+
       - name: Publish package to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        # if: ${{ (github.event_name == 'push') && (runner.os == 'Linux') }}
         with:
           user: __token__
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
