@@ -144,7 +144,7 @@ jobs:
 
     - name: Publish package to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
-      if: ${{ (github.event_name == 'push') && (runner.os == 'Linux') }}
+      # if: ${{ (github.event_name == 'push') && (runner.os == 'Linux') }}
       with:
         user: __token__
         password: ${{ secrets.PYPI_API_TOKEN }}
