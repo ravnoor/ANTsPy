@@ -7,7 +7,9 @@ FROM debian:bookworm as builder
 
 # install libpng to system for cross-architecture support
 # https://github.com/ANTsX/ANTs/issues/1069#issuecomment-681131938
-RUN apt-get update && \
+RUN \
+    --mount=type=cache,sharing=private,target=/var/cache/apt \
+    apt-get update && \
     apt-get install -y --no-install-recommends \
       apt-transport-https \
       bash \
