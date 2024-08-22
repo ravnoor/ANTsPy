@@ -41,6 +41,7 @@ COPY . .
 
 # number of parallel make jobs
 ARG j=2
+ENV CMAKE_ARGS -DBUILD_SHARED_LIBS=ON
 RUN . /opt/conda/etc/profile.d/conda.sh && \
     pip --no-cache-dir -v install .
 
