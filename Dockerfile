@@ -18,7 +18,7 @@ RUN apt-get update && \
       wget
 
 # install miniconda3
-ENV CONDA_VERSION py310_24.5.0-0
+ENV CONDA_VERSION py311_24.5.0-0
 RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-$(uname -m).sh \
     && /bin/bash Miniconda3-${CONDA_VERSION}-Linux-$(uname -m).sh -b -p /opt/conda \
     && rm Miniconda3-${CONDA_VERSION}-Linux-$(uname -m).sh
