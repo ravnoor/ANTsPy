@@ -1,7 +1,8 @@
-# This Dockerfile supports amd64,arm64,ppc64le
-# Note: QEMU emulated ppc64le build might take ~6 hours
+# this Dockerfile is tested on amd64,arm64,ppc64le, but riscv64,s390x,mips64 may also work
+# note: QEMU emulated arm64 build takes more than 6 hours
+# note: timeout threshold for single GHA job is 6 hours resulting in failures for emulated builds
 
-# Use conda to resolve dependencies cross-platform
+# use conda to resolve dependencies cross-platform
 FROM debian:bookworm as builder
 
 # install libpng to system for cross-architecture support
@@ -27,12 +28,12 @@ WORKDIR /usr/local/src
 
 COPY environment.yml .
 
-# Activate the base environment and update it
+# activate the base environment and update it
 RUN . /opt/conda/etc/profile.d/conda.sh && \
     conda activate base && \
     conda info && \
     conda config --show-sources && \
-    echo "Updating conda" && \
+    echo "updating conda" && \
     conda env update -n base && \
     echo "installing cmake" && \
     conda install -c conda-forge cmake
