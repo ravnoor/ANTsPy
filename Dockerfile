@@ -19,19 +19,25 @@ RUN \
       libpng-dev \
       wget
 
-# install miniconda3
-ENV CONDA_VERSION py311_24.5.0-0
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-$(uname -m).sh \
-    && /bin/bash Miniconda3-${CONDA_VERSION}-Linux-$(uname -m).sh -b -p /opt/conda \
-    && rm Miniconda3-${CONDA_VERSION}-Linux-$(uname -m).sh
-ENV PATH=/opt/conda/bin:$PATH
 
 WORKDIR /usr/local/src
 
 COPY environment.yml .
 
+# install miniconda3
+ENV CONDA_VERSION=py311_24.5.0-0
+
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-$(uname -m).sh \
+    && /bin/bash Miniconda3-${CONDA_VERSION}-Linux-$(uname -m).sh -b -p /opt/conda \
+    && rm Miniconda3-${CONDA_VERSION}-Linux-$(uname -m).sh
+ENV PATH=/opt/conda/bin:$PATH
+
+
 # activate the base environment and update it
-RUN . /opt/conda/etc/profile.d/conda.sh && \
+RUN \
+    --mount=type=cache,sharing=private,target=/usr/local/src/pkgs \
+    --mount=type=cache,sharing=private,target=/opt/conda/pkgs \
+     . /opt/conda/etc/profile.d/conda.sh && \
     conda activate base && \
     conda info && \
     conda config --show-sources && \
@@ -44,8 +50,11 @@ COPY . .
 
 # number of parallel make jobs
 ARG j=2
-ENV CMAKE_ARGS -DBUILD_SHARED_LIBS=ON
-RUN . /opt/conda/etc/profile.d/conda.sh && \
+ENV CMAKE_ARGS=-DBUILD_SHARED_LIBS=ON
+RUN \
+    --mount=type=cache,sharing=private,target=/usr/local/src/pkgs \
+    --mount=type=cache,sharing=private,target=/opt/conda/pkgs \
+    . /opt/conda/etc/profile.d/conda.sh && \
     pip --no-cache-dir -v install .
 
 # run tests
