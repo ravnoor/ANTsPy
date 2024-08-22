@@ -17,9 +17,10 @@ RUN apt-get update && \
       wget
 
 # install miniconda3
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py310_23.11.0-1-Linux-$(uname -m).sh \
-    && /bin/bash Miniconda3-py310_23.11.0-1-Linux-$(uname -m).sh -b -p /opt/conda \
-    && rm Miniconda3-py310_23.11.0-1-Linux-$(uname -m).sh
+ENV CONDA_VERSION py310_24.5.0-0
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-$(uname -m).sh \
+    && /bin/bash Miniconda3-${CONDA_VERSION}-Linux-$(uname -m).sh -b -p /opt/conda \
+    && rm Miniconda3-${CONDA_VERSION}-Linux-$(uname -m).sh
 ENV PATH=/opt/conda/bin:$PATH
 
 WORKDIR /usr/local/src
